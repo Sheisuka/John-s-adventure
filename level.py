@@ -3,6 +3,7 @@ import pygame as pg
 from player import Player
 from settings import *
 from particles import *
+from other import Upgrade, Enemy
 
 
 class Level:
@@ -21,7 +22,11 @@ class Level:
         # draw tiles
         self.tiles.update(self.world_shift)
         self.tiles.draw(self.display_surface)
-        self.scroll_x()
+        self.upgrade_sprites.update(self.world_shift)
+        self.upgrade_sprites.draw(self.display_surface)
+
+        self.enemy_sprites.update(self.world_shift)
+        self.enemy_sprites.draw(self.display_surface)
 
         # draw player
         self.player.update()
@@ -29,6 +34,7 @@ class Level:
         self.get_player_on_ground()
         self.vert_movement_collision()
         self.create_landing_particles()
+        self.scroll_x()
         self.player.draw(self.display_surface)
 
     def create_landing_particles(self):
@@ -40,8 +46,10 @@ class Level:
             self.particle_sprites.add(land_particle)
 
     def setup_level(self, layout):
+        self.enemy_sprites = pg.sprite.Group()
         self.tiles = pg.sprite.Group()
         self.player = pg.sprite.GroupSingle()
+        self.upgrade_sprites = pg.sprite.Group()
         for row_i, row in enumerate(layout):
             for col_i, cell in enumerate(row):
                 x = col_i * tile_size
@@ -52,6 +60,14 @@ class Level:
                 if cell == 'P':
                     player_sprite = Player((x, y), self.display_surface, self.jump_particles)
                     self.player.add(player_sprite)
+                    print(player_sprite.hp)
+                if cell == 'U':
+                    upgrade = Upgrade(self.player, (col_i * tile_size + tile_size // 2, row_i * tile_size + tile_size // 2))
+                    self.upgrade_sprites.add(upgrade)
+                if cell == 'E':
+                    enemy = Enemy(self.player, (x, y + (tile_size / 2) - 4))
+                    self.enemy_sprites.add(enemy)
+
 
     def get_player_on_ground(self):
         if self.player.sprite.on_ground:
@@ -115,6 +131,11 @@ class Level:
                     player.rect.top = sprite.rect.bottom
                     player.direction.y = 0
                     player.on_ceiling = True
+        for upgrade in self.upgrade_sprites.sprites():
+            if upgrade.rect.colliderect(player.rect):
+                upgrade.get_picked()
+                self.upgrade_sprites.remove(upgrade)
+                print(player.hp)
 
         if player.on_ground and player.direction.y < 0 or player.direction.y > 1:
             player.on_ground = False

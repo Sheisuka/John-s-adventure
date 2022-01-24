@@ -30,6 +30,14 @@ class Player(pg.sprite.Sprite):
         self.on_ceiling = False
         self.on_left = False
         self.on_right = False
+        self.not_hittable = False
+
+        #Характеристики
+        self.hp = 70
+        self.damage = 20
+
+    def death(self):
+        self.state = 'death'
 
     def import_assets(self):
         self.animations = {'idle': [],
@@ -120,7 +128,7 @@ class Player(pg.sprite.Sprite):
     def get_cur_state(self):
         if self.direction.y < 0:
             self.state = 'jump'
-        elif self.direction.y  > 1:
+        elif self.direction.y > 1:
             self.state = 'fall'
         else:
             if self.direction.x == 0:
