@@ -19,3 +19,5 @@ other.py содержит классы окружения и врагов
 
 EXE 
 https://drive.google.com/file/d/18BEQ6Em9clDZ0kyLMvqD2u8O2Rx3gofh/view?usp=sharing
+PPTX 
+https://docs.google.com/presentation/d/1b0BS_b11-QMjR1MxKIqsvOQDgpL-hel1mePdvGmJPVA/edit?usp=sharing
